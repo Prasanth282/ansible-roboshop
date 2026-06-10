@@ -1,0 +1,81 @@
+- name: shipping 
+  hosts: local
+  become: yes
+  tasks:
+   - name: installing maven 
+     ansible.builtin.dnf:
+     name: "{{ item }}"
+     state: present
+     loop:
+     - mysql
+     - maven
+   
+   - name: creating directiory for system user
+     ansible.builtin.file:
+      path: /app
+      state: directory 
+
+   - name: creating system user to run the the devloped files
+     ansible.builtin.user:
+      name: roboshop
+      home: /app
+      shell: /sbin/login
+      system: true 
+
+   - name: downloading the resources from url 
+     ansible.builtin.get_url:
+      url: https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip 
+      dest: /tmp/shipping.zip
+
+   - name: extract the shippping code 
+     ansible.builtin.unarchieve:
+      src: /tmp/shipping.zip
+      dest: /app
+      remote_src: yes
+
+   - name: installing maven dependencies
+     ansible.builtin.command: mvn clean package 
+     args:
+      chdir: /app
+
+   - name: renaming the jar file 
+     ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar 
+
+   - name: creating shipping.service
+     ansible.builtin.copy:
+      src: shipping.service
+      dest: /etc/systemd/system/shipping.service
+   
+   - name: system daemon reload
+     ansible.builtin.systemd_service:
+      daemon_reload: yes
+
+   - name: enable and start shipping 
+     ansible.builtin.service:
+      name: shipping 
+      state: started
+      enabled: yes
+
+   - name: import data 
+     community.mysql.mysql_db:
+      name: all
+      login_user: root
+      login_password: RoboShop@1
+      login_host: my sqlip 
+      state: import
+      target: "{{ item }}"
+      loop:
+      - /app/db/schema.sql
+      - /app/db/app-user.sql
+      - /app/db/master-data.sql
+   
+   - name: service restart 
+     tags:
+     - restart            # tags are used to run the only specific task in case all tasks are already successful- we can use tags tp run only specific task 
+     asible.builtin.service:
+      name: shipping
+      state: restarted 
+   
+
+   
+
