@@ -2,7 +2,7 @@
   hosts: local 
   connection: local
   vars_files:
-   - vars 
+   - vars.yaml
   become: yes
   # vars_files:
   #  - vault/mysql.yaml
