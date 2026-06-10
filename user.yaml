@@ -59,7 +59,7 @@
       src: user.service
       dest: /etc/systemd/system/cart.service
 
-   - name: system user reload u
+   - name: system user reload 
      ansible.builtin.systemd_reload:
       daemon_reload: true 
 
