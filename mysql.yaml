@@ -1,11 +1,11 @@
-- name: configuring my sql
+- name: configuring mysql
   hosts: local 
   connection: local
   vars_files:
    - vars 
   become: yes
-  vars_files:
-   - vault/mysql.yaml
+  # vars_files:
+  #  - vault/mysql.yaml
   tasks: 
    - name: installing my sql server 
      ansible.builtin.dnf:
