@@ -1,3 +1,4 @@
 vault/*.yaml
-user.yaml
+ansible-roboshop/user.yaml
+
 
