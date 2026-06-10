@@ -1,6 +1,8 @@
 - name: configuring my sql
   hosts: local 
   connection: local
+  vars_files:
+   - vars 
   become: yes
   vars_files:
    - vault/mysql.yaml
