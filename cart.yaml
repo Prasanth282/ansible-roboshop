@@ -31,7 +31,7 @@
       dest: /tmp/cart.zip
 
    - name: unzipping the code 
-     ansible.builtin.unarchieve:
+     ansible.builtin.unarchieve:  
       src: /tmp/cart.zip
       dest: /app_cart
       remote_src: yes
